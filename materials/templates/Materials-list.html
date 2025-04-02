@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% load static %} {% block title %} Materials {% endblock %}
+
+{% block content %}
+
+<section class="materials">
+  <section class="header">
+    <h1>Materials</h1>
+    <div class="text-input-wrapper">
+      <label for="unique-input-id" class="text-input-label">Search materials</label>
+      <input id="unique-input-id" type="text" class="search text-input" placeholder="Search materials..." />
+    </div>
+
+    <div class="row d-flex">
+      <div class="custom-last-row d-flex justify-content-end">
+          <button class="btn btn-large btn-secondary btn-add">
+            <span>Add new material</span>
+          </button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="materials-form">
+    <table id="materialHeader" class="table results">
+      <thead style="position: sticky; top: -49px;">
+         <tr>
+          <th>Raw Material Name</th>
+          <th>kg-eq.</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody id="materialTable">
+        <tr>
+          {% for material in materials %}
+          <td>{{material.material_name}}</td>
+          <td>{{material.kg_eq}}</td>
+          <td>{{material.cost}}</td>
+        {% endfor %}
+      </tbody>
+    </table>
+    <hr />
+  </section>
+</section>
+<script>
+  $(document).ready(function() {
+    $(".search").keyup(function() {
+        var searchTerm = $(".search").val();
+        var listItem = $('.results tbody').children('tr');
+        var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+
+        $.extend($.expr[':'], {
+            'containsi': function(elem, i, match, array) {
+                return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+            }
+        });
+
+        $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e) {
+            $(this).attr('visible', 'false');
+        });
+
+        $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e) {
+            $(this).attr('visible', 'true');
+        });
+
+        var jobCount = $('.results tbody tr[visible="true"]').length;
+        $('.counter').text(jobCount + ' item');
+
+        if (jobCount == '0') {
+            $('.no-result').show();
+        } else {
+            $('.no-result').hide();
+        }
+    }); // key up
+});
+</script>
+<style>
+
+  .horizontal {
+    display: inline-block;
+    float:left;
+  }
+  .results tr[visible='false'],
+  .no-result{
+    display:none;
+  }
+
+  .results tr[visible='true']{
+    display:table-row;
+  }
+
+  .hide {
+display: none !important;
+}
+
+
+label {
+content: '';
+  //margin-left: 10px;
+  //background: white;
+float: left;
+padding-right: 30px;
+}
+.popup .overlay {
+position:fixed;
+top:0px;
+left:0px;
+width:100vw;
+height:100vh;
+background:rgba(0,0,0,0.7);
+z-index:1;
+display:none;
+}
+
+.popup .content {
+position:absolute;
+top:30%;
+left:70%;
+transform:translate(-50%,-50%) scale(0);
+background:#fff;
+width:600px;
+height:350px;
+z-index:2;
+text-align:center;
+padding:40px;
+box-sizing:border-box;
+font-family:"Open Sans",sans-serif;
+}
+
+.popup .close-btn {
+cursor:pointer;
+position:fixed;
+//right:20px;
+bottom:20px;
+width:30px;
+height:30px;
+background:#222;
+color:#fff;
+font-size:25px;
+font-weight:600;
+line-height:30px;
+text-align:center;
+border-radius:50%;
+}
+
+.popup.active .overlay {
+display:block;
+}
+
+.popup.active .content {
+transition:all 300ms ease-in-out;
+transform:translate(-50%,-50%) scale(1);
+}
+
+
+  </style>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

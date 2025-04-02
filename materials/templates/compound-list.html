@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} All compounds {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/highcharts.css">
+{% endblock stylesheets %}
+
+{% block content %}
+
+{% block extrajs %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/3.0.0/js/dataTables.select.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/3.0.0/js/select.dataTables.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+{% endblock extrajs %}
+
+<div  id="example2">
+    <h2 class="headertekst">Green Fuel table</h2>
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+
+
+      <div class="d-block mb-4 mb-md-0">
+         
+      </div>
+          <div class="btn-toolbar mb-2 mb-md-0">
+              <a href="" class="btn btn-sm btn-primary">Add new compound</a>
+          </div>
+      </div>
+
+      <div id="column-chart-container" style="width: 100%"></div>
+  <div class="container">
+
+    <table class="table" id="data-table" style="position: relative;">
+
+        <thead>
+    <tr>
+       <th>comp_id</th>
+       <th>Fuel_type</th>
+       <th>zero_carbon_option</th>
+        <th>Fuel_type_rate</th>
+        <th>Zero_carbon_rate</th>
+        <th>green_premium_fuels</th>
+        <th>market</th>
+ 
+
+
+    </tr>
+</thead>
+         <tbody id="myTable">
+            <tr>
+                {% for object in object_list %}
+              <td>{{object.comp_id}}</td>
+              <td>{{object.Fuel_type}}</td>
+              <td>{{object.zero_carbon_option}}</td>
+          <td>{{ object.Fuel_type_rate}}</td>
+          <td>{{ object.Zero_carbon_rate}}</td>
+          <td>{{ object.green_premium_fuels}}</td>
+          <td>{{ object.market}}</td>
+  
+   
+            </tr>
+          {% endfor %}
+
+    </tbody>
+
+    </table>
+   
+ </div>
+ <script>
+   $(document).ready( function () {
+	new DataTable('#data-table', {
+    search: {
+        return: true
+    }
+});
+   });
+ </script>
+     <!-- Highcharts Script -->
+      <script>
+        function getDataFromTable(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll("tbody tr");
+            const categories = [];
+            const values = [];
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                categories.push(cells[1].innerText); // Categories
+                values.push(parseFloat(cells[4].innerText.trim())); // Values
+            });
+
+            return { categories, values };
+        }
+
+        const data = getDataFromTable("data-table");
+
+        Highcharts.chart('column-chart-container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Zero Carbon Rate by Fuel Type'
+            },
+            xAxis: {
+                categories: data.categories,
+                title: {
+                    text: 'Fuel Type'
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Zero Carbon Rate'
+                }
+            },
+            series: [{
+                name: 'Carbon Rates',
+                data: data.values
+            }]
+        });
+    </script>
+
+    <style type="text/css">
+    h2.headertekst {
+  text-align: center;
+}
+</style>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
