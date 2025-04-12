@@ -1,6 +1,3 @@
-Here’s a **README.md** file for your current repository, based on the provided context:
-
-```markdown
 # Django Multiple Users Application
 
 ## Overview
